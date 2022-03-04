@@ -29,10 +29,10 @@ app.MapGet
     async (CustomerDb db) => await db.Customers.ToListAsync()
     );
 
-app.MapGet(
-    "/products",
-    (int? pageNumber) => 
-    $"Requesting page {pageNumber ?? 1}");
+//app.MapGet(
+//    "/products",
+//    (int? pageNumber) => 
+//    $"Requesting page {pageNumber ?? 1}");
 
 // BadHttpRequestException:
 // Required parameter "int pageNumber"
@@ -43,6 +43,11 @@ string ListProducts(int pageNumber = 1)
 
 app.MapGet("/products", ListProducts);
 
+// Http Options ve Http Head kullanýmý
+// app.MapMethods("/options-or-head",
+//    new[] { "OPTIONS", "HEAD" },
+//    () => "This is an options or head request");
+
 
 app.MapPost("/customers", async (CustomerDb db, Customer cus) =>
 {
@@ -51,7 +56,7 @@ app.MapPost("/customers", async (CustomerDb db, Customer cus) =>
     return Results.Created($"/customers/{cus.Id}", cus);
 });
 
-app.MapGet("/customers/{id}", async (CustomerDb db, int id) => await db.Customers.FindAsync(id)).AllowAnonymous();
+app.MapGet("/customers/{id}", async (CustomerDb db, int id) => await db.Customers.FindAsync(id));
 
 app.MapPut("/customers/{id}", async (CustomerDb db, Customer newCustomer, int id) =>
 {
@@ -79,12 +84,41 @@ app.MapDelete("/customers/{id}", async (CustomerDb db, int id) =>
 
 app.Run();
 
+// Port numarasýný deðiþtirmek
+// app.Run("http://localhost:3000");
+
+// Çoklu port kullanýmý
+// app.Urls.Add("http://localhost:3000");
+// app.Urls.Add("http://localhost:4000");
+
+// Loglama
+// app.Logger.LogInformation("Bu bir info");
+// app.Logger.LogError("Bu bir error");
+// app.Logger.LogWarning("Bu bir warning");
+// app.Logger.LogCritical("Bu bir kritik log");
+
+// appsettings.json dosyasýný okuma
+// app.Logger.LogInformation($"{app.Configuration["JWT:Key"]}");
+
+/// <summary>
+/// Inmemory veritabaný için kullanýlacak müþteri model
+/// </summary>
 class Customer
 {
+    /// <summary>
+    /// Müþteri id'si
+    /// </summary>
     public int Id { get; set; }
-    public string Name { get; set; }
+
+    /// <summary>
+    /// Müþteri ismi
+    /// </summary>
+    public string? Name { get; set; }
 };
 
+/// <summary>
+/// Inmemory içerisinde kullanýlabilecek baðlantý sýnýfý
+/// </summary>
 class CustomerDb : DbContext
 {
     public CustomerDb(DbContextOptions options) : base(options) { }
@@ -97,10 +131,56 @@ class CustomerDb : DbContext
     }
 }
 
-class Hello
-{
-    public static string Hi()
-    {
-        return "Hi!";
-    }
-}
+//  Route Handler formatlarý
+//app.MapGet("/", Local);
+//Hello h = new Hello();
+//app.MapGet("/", h.InstanceMethod);
+//app.MapGet("/", Hello.StaticMethod);
+
+//var lambda = () => "This is a lambda variable";
+
+//app.MapGet("/", lambda);
+//string Local() => "Soner";
+
+//class Hello
+//{
+//    public string InstanceMethod()
+//    {
+//        return "Soner";
+//    }
+
+//    public static string StaticMethod()
+//    {
+//        return "Soner";
+//    }
+//}
+
+// Route isimlendirme ve LinkGenerator
+//app.MapGet("/hello", () => "Hello there")
+//    .WithName("hi");
+
+//app.MapGet("/", (LinkGenerator linker) =>
+//@$"The link to the hello route is 
+//{
+//    linker.GetPathByName("hi", values: null)
+//}");
+
+// Route parametreleri
+//app.MapGet("users/{username}/books/{id}",
+//    (string username, int id)
+//    => $"User: {username} Book: {id}");
+
+// Opsiyonel parametreler
+//app.MapGet(
+//    "/products",
+//    (int ? pageNumber) =>
+//    $"Requesting page {pageNumber ?? 1}");
+
+// Açýk olarak parametre binding
+//app.MapGet(
+//    "/{id}",
+//    ([FromRoute] int id,
+//     [FromQuery(Name = "p")] int page,
+//     [FromServices] Service service,
+//     [FromHeader(Name = "Content-Type")] string contentType) =>
+//{ });

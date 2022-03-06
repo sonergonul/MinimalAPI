@@ -24,6 +24,22 @@ app.UseSwaggerUI(c =>
 
 app.MapGet("/hello", () => "Hello there");
 
+
+// Minimal API - Responses
+
+// IResult - Task<IResult> veya ValueTask<IResult>
+// string - Task<string> veya ValueTask<string> - text/plain
+// T - Json seralize - application/json
+
+app.MapGet("/response1", () => "Hello World");
+app.MapGet("/response2", () => new { Message = "Hello World" });
+app.MapGet("/response3", () => Results.Ok(new { Message = "Hello World" }));
+app.MapGet("/response4", () => Results.Json(new { Message = "Hello World" }));
+app.MapGet("/405", () => Results.StatusCode(405));
+app.MapGet("/text", () => Results.Text("This is some text"));
+app.MapGet("/old-path", () => Results.Redirect("/new-path"));
+app.MapGet("/download", () => Results.File("C:/appsettings.json", contentType: "application/json", fileDownloadName: "appsettings.json"));
+
 app.MapGet
     ("/customers", 
     async (CustomerDb db) => await db.Customers.ToListAsync()
@@ -184,3 +200,4 @@ class CustomerDb : DbContext
 //     [FromServices] Service service,
 //     [FromHeader(Name = "Content-Type")] string contentType) =>
 //{ });
+

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,22 @@ app.MapGet
     ("/customers", 
     async (CustomerDb db) => await db.Customers.ToListAsync()
     );
+
+// app.MapGet("/auth", [Authorize] ()
+// => "This endpoint requires authorization");
+app.MapGet("/auth", () => "Sadece yetkili kiþiler!")
+   .RequireAuthorization();
+
+// builder.Services.AddAuthorization
+// (o => o.AddPolicy("AdminsOnly"));
+app.MapGet("/admin", [Authorize("AdminsOnly")] 
+() => "Sadece adminler!");
+
+// app.MapGet("/login", [AllowAnonymous] () =>
+// "This endpoint is for all roles.");
+
+app.MapGet("/login2", () => "Herkese açýk!")
+   .AllowAnonymous();
 
 //app.MapGet(
 //    "/products",

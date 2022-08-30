@@ -13,4 +13,4 @@ Projede gerçek bir veritabanı bağlantısı kullanmak yerine InMemory bir veri
 Swagger
 -----
 
-Projede Swashbuckle.AspNetCore paketi sayesinde Swagger desteği de mevcut. /swagger endpoint'i ile erişebilirsiniz.
+Projede [Swashbuckle.AspNetCore](https://www.nuget.org/packages/Swashbuckle.AspNetCore) paketi sayesinde Swagger desteği de mevcut. `/swagger` endpoint'i ile erişebilirsiniz.
